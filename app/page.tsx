@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { SAMPLE_RESUME } from "@/lib/sample";
+import { RESUME_BEFORE, RESUME_AFTER, DIFF_POINTS } from "@/lib/showcase";
+import { WhaleBackground } from "./WhaleBackground";
 import type { ParsedResume, MatchResult, OptimizeResult } from "@/lib/types";
 
 export default function Home() {
@@ -64,7 +66,8 @@ export default function Home() {
     }
   }
 
-  async function handleOptimize(m: MatchResult) {    setSelected(m);
+  async function handleOptimize(m: MatchResult) {
+    setSelected(m);
     setOptimize(null);
     setError("");
     try {
@@ -82,48 +85,117 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
-      <Header />
-      {/* 后续区块见下方追加 */}
-      <ResumeInput
-        resumeText={resumeText}
-        setResumeText={setResumeText}
-        onMatch={handleMatch}
-        onSample={() => setResumeText(SAMPLE_RESUME)}
-        onFile={handleFile}
-        loading={loading}
-      />
-      {error && (
-        <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {error}
-        </p>
-      )}
-      {loading && (
-        <p className="mt-4 animate-pulse text-sm text-brand">{loading}</p>
-      )}
-      {parsed && <ProfileCard parsed={parsed} />}
-      {matches.length > 0 && (
-        <MatchList
-          matches={matches}
-          selected={selected}
-          onSelect={handleOptimize}
-        />
-      )}
-      {selected && optimize && (
-        <OptimizePanel job={selected.job.title} result={optimize} />
-      )}
-    </main>
+    <>
+      <WhaleBackground />
+      <main className="mx-auto max-w-7xl px-4 py-8">
+        <Header />
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* 左：功能区 */}
+          <div className="space-y-5">
+            <ResumeInput
+              resumeText={resumeText}
+              setResumeText={setResumeText}
+              onMatch={handleMatch}
+              onSample={() => setResumeText(SAMPLE_RESUME)}
+              onFile={handleFile}
+              loading={loading}
+            />
+            {error && (
+              <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                {error}
+              </p>
+            )}
+            {loading && (
+              <p className="animate-pulse text-sm font-medium text-white">
+                {loading}
+              </p>
+            )}
+            {parsed && <ProfileCard parsed={parsed} />}
+            {matches.length > 0 && (
+              <MatchList
+                matches={matches}
+                selected={selected}
+                onSelect={handleOptimize}
+              />
+            )}
+            {selected && optimize && (
+              <OptimizePanel job={selected.job.title} result={optimize} />
+            )}
+          </div>
+
+          {/* 右：示例对比区 */}
+          <div className="lg:sticky lg:top-8 lg:h-fit">
+            <ShowcasePanel />
+          </div>
+        </div>
+      </main>
+    </>
   );
 }
 
 function Header() {
   return (
     <header className="mb-8 text-center">
-      <h1 className="text-3xl font-bold text-slate-900">AI 求职智能匹配助手</h1>
-      <p className="mt-2 text-slate-500">
-        粘贴简历 → 智能匹配契合岗位 → 针对心仪岗位给出简历优化建议，提升初筛命中率
+      <h1 className="text-3xl font-bold text-white drop-shadow-lg sm:text-4xl">
+        🐳 AI 求职智能匹配助手
+      </h1>
+      <p className="mt-2 text-sm text-blue-50/90 drop-shadow">
+        上传简历 → 智能匹配契合岗位 → 针对心仪岗位给出优化建议，提升初筛命中率
       </p>
     </header>
+  );
+}
+
+function ShowcasePanel() {
+  return (
+    <section className="rounded-2xl border border-white/40 bg-white/90 p-5 shadow-xl backdrop-blur">
+      <h2 className="mb-1 font-semibold text-slate-800">📝 简历优化示例</h2>
+      <p className="mb-4 text-xs text-slate-500">
+        看看一份简历优化前后的差别 —— 这正是右侧 AI 能帮你做的
+      </p>
+
+      <div className="space-y-3">
+        <div className="rounded-xl border border-red-200 bg-red-50/60 p-3">
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-red-600">
+            <span className="rounded bg-red-200 px-1.5 py-0.5">修改前</span>
+            平淡、无量化、缺关键词
+          </div>
+          <pre className="whitespace-pre-wrap text-xs leading-relaxed text-slate-600">
+            {RESUME_BEFORE}
+          </pre>
+        </div>
+
+        <div className="flex justify-center text-blue-500">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </div>
+
+        <div className="rounded-xl border border-green-200 bg-green-50/60 p-3">
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-green-700">
+            <span className="rounded bg-green-200 px-1.5 py-0.5">修改后</span>
+            量化成果、补齐关键词、STAR 表达
+          </div>
+          <pre className="whitespace-pre-wrap text-xs leading-relaxed text-slate-700">
+            {RESUME_AFTER}
+          </pre>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-xl bg-blue-50/70 p-3">
+        <h3 className="mb-1.5 text-xs font-semibold text-blue-800">
+          优化做了什么
+        </h3>
+        <ul className="space-y-1 text-xs text-slate-600">
+          {DIFF_POINTS.map((p, i) => (
+            <li key={i} className="flex gap-1.5">
+              <span className="text-blue-500">✓</span>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -143,7 +215,7 @@ function ResumeInput({
   loading: string;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-white/40 bg-white/90 p-5 shadow-xl backdrop-blur">
       <div className="mb-2 flex items-center justify-between">
         <label className="font-medium text-slate-700">上传或粘贴你的简历</label>
         <button
@@ -201,7 +273,7 @@ function Tags({ items, color }: { items: string[]; color: string }) {
 
 function ProfileCard({ parsed }: { parsed: ParsedResume }) {
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-white/40 bg-white/90 p-5 shadow-xl backdrop-blur">
       <h2 className="mb-2 font-semibold text-slate-800">简历画像</h2>
       <p className="mb-3 text-sm text-slate-600">{parsed.summary}</p>
       <div className="space-y-2 text-sm">
@@ -228,18 +300,18 @@ function MatchList({
   onSelect: (m: MatchResult) => void;
 }) {
   return (
-    <section className="mt-6">
-      <h2 className="mb-3 font-semibold text-slate-800">
+    <section>
+      <h2 className="mb-3 font-semibold text-white drop-shadow">
         为你匹配到 {matches.length} 个岗位
       </h2>
       <div className="space-y-3">
         {matches.map((m) => (
           <div
             key={m.job.id}
-            className={`rounded-2xl border bg-white p-4 shadow-sm transition ${
+            className={`rounded-2xl border bg-white/90 p-4 shadow-xl backdrop-blur transition ${
               selected?.job.id === m.job.id
                 ? "border-brand ring-1 ring-brand"
-                : "border-slate-200"
+                : "border-white/40"
             }`}
           >
             <div className="flex items-start justify-between">
@@ -293,7 +365,7 @@ function OptimizePanel({
         ? "text-amber-500"
         : "text-red-500";
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-white/40 bg-white/90 p-5 shadow-xl backdrop-blur">
       <h2 className="mb-3 font-semibold text-slate-800">
         《{job}》简历诊断与优化
       </h2>
