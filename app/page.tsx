@@ -47,8 +47,24 @@ export default function Home() {
     }
   }
 
-  async function handleOptimize(m: MatchResult) {
-    setSelected(m);
+  async function handleFile(file: File) {
+    setError("");
+    try {
+      setLoading("正在读取文件...");
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/extract-file", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "文件解析失败");
+      setResumeText(json.text);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "文件解析失败");
+    } finally {
+      setLoading("");
+    }
+  }
+
+  async function handleOptimize(m: MatchResult) {    setSelected(m);
     setOptimize(null);
     setError("");
     try {
@@ -74,6 +90,7 @@ export default function Home() {
         setResumeText={setResumeText}
         onMatch={handleMatch}
         onSample={() => setResumeText(SAMPLE_RESUME)}
+        onFile={handleFile}
         loading={loading}
       />
       {error && (
@@ -115,18 +132,20 @@ function ResumeInput({
   setResumeText,
   onMatch,
   onSample,
+  onFile,
   loading,
 }: {
   resumeText: string;
   setResumeText: (v: string) => void;
   onMatch: () => void;
   onSample: () => void;
+  onFile: (file: File) => void;
   loading: string;
 }) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-2 flex items-center justify-between">
-        <label className="font-medium text-slate-700">粘贴你的简历</label>
+        <label className="font-medium text-slate-700">上传或粘贴你的简历</label>
         <button
           onClick={onSample}
           className="text-sm text-brand hover:underline"
@@ -134,11 +153,27 @@ function ResumeInput({
           填入示例简历
         </button>
       </div>
+      <label className="mb-3 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 py-3 text-sm text-slate-500 transition hover:border-brand hover:text-brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+        </svg>
+        点击上传简历文件（PDF / DOCX）
+        <input
+          type="file"
+          accept=".pdf,.docx"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onFile(f);
+            e.target.value = "";
+          }}
+        />
+      </label>
       <textarea
         value={resumeText}
         onChange={(e) => setResumeText(e.target.value)}
         rows={10}
-        placeholder="把简历内容粘贴到这里，包含教育背景、技能、项目/实习经历、求职意向..."
+        placeholder="上传文件后内容会显示在这里，也可直接粘贴简历：教育背景、技能、项目/实习经历、求职意向..."
         className="w-full resize-y rounded-lg border border-slate-300 p-3 text-sm outline-none focus:border-brand"
       />
       <button
