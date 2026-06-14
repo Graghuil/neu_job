@@ -1,0 +1,33 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+
+# env files — 不提交任何密钥
+.env
+.env.local
+.env*.local
+
+# vercel
+.vercel
+
+# transformers 模型缓存
+/.cache
+
+# 本地工具配置
+/.claude
