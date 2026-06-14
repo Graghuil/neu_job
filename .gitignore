@@ -31,3 +31,6 @@ npm-debug.log*
 
 # 本地工具配置
 /.claude
+
+# Office 临时锁文件
+~$*
