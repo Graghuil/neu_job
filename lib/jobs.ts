@@ -5,3 +5,9 @@ import { seedJobs } from "../scripts/seed-jobs";
 export function loadJobs(): Job[] {
   return seedJobs;
 }
+
+/** 岗位库覆盖的所有城市（去重，远程排在最后） */
+export function listCities(): string[] {
+  const cities = [...new Set(seedJobs.map((j) => j.location))];
+  return cities.sort((a, b) => (a === "远程" ? 1 : b === "远程" ? -1 : 0));
+}

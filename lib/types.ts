@@ -46,3 +46,44 @@ export interface OptimizeResult {
   suggestions: string[]; // 优化建议
   rewriteExample: string; // 针对该 JD 的简历改写示例
 }
+
+/** 候选人五维能力评估 */
+export interface AssessmentResult {
+  /** 五个维度的得分，顺序固定，用于雷达图 */
+  dimensions: { name: string; score: number; comment: string }[];
+  overall: number; // 综合得分 0-100
+  level: string; // 评级，如 优秀 / 良好 / 待提升
+  strengths: string[]; // 亮点
+  improvements: string[]; // 待提升项
+  summary: string; // 一句话总评
+}
+
+/** MBTI 人格分析与荐岗 */
+export interface MbtiJobRec {
+  title: string; // 推荐岗位
+  reason: string; // 推荐理由
+  fit: number; // 契合度 0-100
+}
+export interface MbtiResult {
+  type: string; // 规范化后的 MBTI 类型，如 INTJ
+  nickname: string; // 人格别称，如 建筑师
+  traits: string[]; // 性格关键词
+  strengths: string[]; // 职场优势
+  watchouts: string[]; // 需要注意的点
+  recommendedJobs: MbtiJobRec[]; // 推荐岗位
+  workStyle: string; // 适合的工作方式/环境
+}
+
+/** AI 求职问答消息 */
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+/** 同城匹配：单个岗位的星级评分结果 */
+export interface CityJobResult {
+  job: Job;
+  stars: number; // 1-5，支持 0.5 档
+  reason: string; // 打分理由
+  highlights: string[]; // 亮点标签，如 高薪 / 应届友好 / 大厂
+}
