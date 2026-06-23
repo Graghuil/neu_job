@@ -7,9 +7,10 @@ import { AssessView } from "./AssessView";
 import { MbtiView } from "./MbtiView";
 import { ChatView } from "./ChatView";
 import { CityView } from "./CityView";
+import { SubmitJobView } from "./SubmitJobView";
 import type { ParsedResume } from "@/lib/types";
 
-type Tab = "match" | "assess" | "mbti" | "chat" | "city";
+type Tab = "match" | "assess" | "mbti" | "chat" | "city" | "submit";
 
 const NAV: { id: Tab; label: string; desc: string; icon: string }[] = [
   { id: "match", label: "简历打分与推荐", desc: "匹配岗位 + 优化", icon: "🎯" },
@@ -17,6 +18,7 @@ const NAV: { id: Tab; label: string; desc: string; icon: string }[] = [
   { id: "mbti", label: "MBTI 人格分析", desc: "人格荐岗", icon: "🧭" },
   { id: "chat", label: "AI 求职问答", desc: "求职答疑", icon: "💬" },
   { id: "city", label: "同城职位匹配", desc: "按城市星级荐岗", icon: "📍" },
+  { id: "submit", label: "提交岗位信息", desc: "分享岗位入库", icon: "📮" },
 ];
 
 export default function Home() {
@@ -120,6 +122,7 @@ export default function Home() {
               {tab === "mbti" && <MbtiView />}
               {tab === "chat" && <ChatView />}
               {tab === "city" && <CityView />}
+              {tab === "submit" && <SubmitJobView />}
             </div>
           </main>
         </div>
